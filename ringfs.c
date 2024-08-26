@@ -206,7 +206,7 @@ int ringfs_scan(struct ringfs *fs)
 
         /* Detect and fix partially erased sectors. */
         if (header.status == SECTOR_ERASING || header.status == SECTOR_ERASED) {
-            _sector_free(fs, addr);
+            _sector_free(fs, sector);
             header.status = SECTOR_FREE;
         }
 
