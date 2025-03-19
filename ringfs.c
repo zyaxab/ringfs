@@ -60,7 +60,7 @@ static int _sector_set_status(struct ringfs *fs, int sector, uint32_t status)
 static int _sector_free(struct ringfs *fs, int sector, uint32_t current_status)
 {
     int sector_addr = _sector_address(fs, sector);
-    if(current_status != SECTOR_ERASING && current_status != SECTOR_FORMATTING)
+    if (current_status != SECTOR_ERASING && current_status != SECTOR_FORMATTING)
         _sector_set_status(fs, sector, SECTOR_ERASING);
     fs->flash->sector_erase(fs->flash, sector_addr);
     fs->flash->program(fs->flash,
