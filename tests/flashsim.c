@@ -39,13 +39,11 @@ struct flashsim *flashsim_open(const char *name, int size, int sector_size)
     assert(sim->fh != NULL);
     assert(ftruncate(fileno(sim->fh), size) == 0);
 
-    if(!file_exists)
-    {
+    if(!file_exists) {
         void *empty = malloc(sim->sector_size);
         memset(empty, 0xff, sim->sector_size);
 
-        for(int address=0; address<size; address+=sector_size)
-        {
+        for (int address=0; address<size; address+=sector_size) {
             assert(fwrite(empty, 1, sim->sector_size, sim->fh) == (size_t) sim->sector_size);
         }
 
