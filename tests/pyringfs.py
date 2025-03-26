@@ -124,9 +124,10 @@ class RingFS(object):
 
     def dump(self):
         import ctypes
-        ctypes.pythonapi.PyFile_AsFile.argtypes= [ ctypes.py_object ]
-        ctypes.pythonapi.PyFile_AsFile.restype= ctypes.c_void_p
-        cstdout = ctypes.pythonapi.PyFile_AsFile(sys.stdout)
+        libc = ctypes.CDLL(None)
+        libc.fdopen.argtypes = [ctypes.c_int, ctypes.c_char_p]
+        libc.fdopen.restype = ctypes.c_void_p
+        cstdout = libc.fdopen(sys.stdout.fileno(), b"w")
         self.libringfs.ringfs_dump(cstdout, byref(self.ringfs))
 
 __all__ = [
