@@ -22,7 +22,7 @@ class FlashSim(object):
 
     def __init__(self, name, size, sector_size):
         self.libflashsim = libflashsim()
-        self.sim = self.libflashsim.flashsim_open(name ,size, sector_size)
+        self.sim = self.libflashsim.flashsim_open(name.encode("utf-8") ,size, sector_size)
 
     def sector_erase(self, addr):
         self.libflashsim.flashsim_sector_erase(self.sim, addr)

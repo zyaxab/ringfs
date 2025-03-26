@@ -9,7 +9,7 @@ from pyringfs import RingFSFlashPartition, RingFS
 
 def compare(a, b):
     if a != b:
-        print ">>> %s != %s" % (a, b)
+        print(">>> %s != %s" % (a, b))
     return a == b
 
 
@@ -17,8 +17,8 @@ class FuzzRun(object):
 
     def __init__(self, name, version, object_size, sector_size, total_sectors, sector_offset, sector_count):
 
-        print "FuzzRun[%s]: v=%08x os=%d ss=%d ts=%d so=%d sc=%d" % (name, version, object_size, sector_size,
-                total_sectors, sector_offset, sector_count)
+        print("FuzzRun[%s]: v=%08x os=%d ss=%d ts=%d so=%d sc=%d" % (name, version, object_size, sector_size,
+                total_sectors, sector_offset, sector_count))
 
         sim = FlashSim(name, total_sectors*sector_size, sector_size)
 
@@ -57,9 +57,9 @@ class FuzzRun(object):
         def do_discard():
             self.fs.discard()
 
-        for i in xrange(1000):
+        for i in range(1000):
             fun = random.choice([do_append]*100 + [do_fetch]*100 + [do_rewind]*10 + [do_discard]*10)
-            print i, fun.__name__
+            print(i, fun.__name__)
             fun()
 
             # consistency check
@@ -71,9 +71,9 @@ class FuzzRun(object):
                 assert compare(newfs.ringfs.write.sector, self.fs.ringfs.write.sector)
                 assert compare(newfs.ringfs.write.slot, self.fs.ringfs.write.slot)
             except AssertionError:
-                print "self.fs:"
+                print("self.fs:")
                 self.fs.dump()
-                print "newfs:"
+                print("newfs:")
                 newfs.dump()
                 raise
 
