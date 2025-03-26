@@ -39,6 +39,7 @@ struct flashsim *flashsim_open(const char *name, int size, int sector_size)
 
     // Populate file with 0xFF to mimic a real empty flash
     void *empty = malloc(sim->sector_size);
+    assert(empty != NULL);
     memset(empty, 0xff, sim->sector_size);
 
     for (int address=0; address<size; address+=sector_size) {
