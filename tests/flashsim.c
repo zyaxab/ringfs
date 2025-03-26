@@ -31,24 +31,21 @@ struct flashsim *flashsim_open(const char *name, int size, int sector_size)
 {
     struct flashsim *sim = malloc(sizeof(struct flashsim));
 
-    int file_exists = access(name, F_OK) != -1;
-
     sim->size = size;
     sim->sector_size = sector_size;
-    sim->fh = fopen(name, file_exists ? "rb+" : "wb+");
+    sim->fh = fopen(name, "wb+");
     assert(sim->fh != NULL);
     assert(ftruncate(fileno(sim->fh), size) == 0);
 
-    if(!file_exists) {
-        void *empty = malloc(sim->sector_size);
-        memset(empty, 0xff, sim->sector_size);
+    // Populate file with 0xFF to mimic a real empty flash
+    void *empty = malloc(sim->sector_size);
+    memset(empty, 0xff, sim->sector_size);
 
-        for (int address=0; address<size; address+=sector_size) {
-            assert(fwrite(empty, 1, sim->sector_size, sim->fh) == (size_t) sim->sector_size);
-        }
-
-        free(empty);
+    for (int address=0; address<size; address+=sector_size) {
+        assert(fwrite(empty, 1, sim->sector_size, sim->fh) == (size_t) sim->sector_size);
     }
+
+    free(empty);
 
     return sim;
 }
