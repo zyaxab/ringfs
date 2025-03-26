@@ -91,6 +91,9 @@ int ringfs_init(struct ringfs *fs, struct ringfs_flash_partition *flash, uint32_
 /**
  * Format the flash memory.
  *
+ * If this fails there is no way to recover from ringfs itself. It will require
+ * a lowlevel storage erase.
+ *
  * @param fs Initialized RingFS instance.
  * @returns Zero on success, -1 on failure.
  */

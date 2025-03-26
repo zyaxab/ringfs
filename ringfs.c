@@ -102,7 +102,7 @@ static int _slot_get_status(struct ringfs *fs, struct ringfs_loc *loc, uint32_t 
 
 static int _slot_set_status(struct ringfs *fs, struct ringfs_loc *loc, uint32_t status)
 {
-    return fs->flash->program(fs->flash, 
+    return fs->flash->program(fs->flash,
             _slot_address(fs, loc) + offsetof(struct slot_header, status),
             &status, sizeof(status));
 }
@@ -159,11 +159,14 @@ int ringfs_format(struct ringfs *fs)
 {
     /* Mark all sectors to prevent half-erased filesystems. */
     for (int sector=0; sector<fs->flash->sector_count; sector++)
-        _sector_set_status(fs, sector, SECTOR_FORMATTING);
+        //_sector_set_status(fs, sector, SECTOR_FORMATTING);
+        if (_sector_set_status(fs, sector, SECTOR_FORMATTING) == -1)
+            return -1;
 
     /* Erase, update version, mark as free. */
     for (int sector=0; sector<fs->flash->sector_count; sector++)
-        _sector_free(fs, sector);
+        if (_sector_free(fs, sector) == -1)
+            return -1;
 
     /* Start reading & writing at the first sector. */
     fs->read.sector = 0;
@@ -306,7 +309,7 @@ int ringfs_count_exact(struct ringfs *fs)
     while (!_loc_equal(&loc, &fs->write)) {
         uint32_t status;
         _slot_get_status(fs, &loc, &status);
-        
+
         if (status == SLOT_VALID)
             count++;
 
