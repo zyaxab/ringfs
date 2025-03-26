@@ -159,7 +159,6 @@ int ringfs_format(struct ringfs *fs)
 {
     /* Mark all sectors to prevent half-erased filesystems. */
     for (int sector=0; sector<fs->flash->sector_count; sector++)
-        //_sector_set_status(fs, sector, SECTOR_FORMATTING);
         if (_sector_set_status(fs, sector, SECTOR_FORMATTING) == -1)
             return -1;
 
