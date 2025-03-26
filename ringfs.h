@@ -9,6 +9,10 @@
 #ifndef RINGFS_H
 #define RINGFS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @defgroup ringfs_api RingFS API
  * @{
@@ -84,9 +88,8 @@ struct ringfs {
  * @param version Object version. Should be incremented whenever the object's
  *                semantics or size change in a backwards-incompatible way.
  * @param object_size Size of one stored object, in bytes.
- * @returns Zero on success, -1 on failure.
  */
-int ringfs_init(struct ringfs *fs, struct ringfs_flash_partition *flash, uint32_t version, int object_size);
+void ringfs_init(struct ringfs *fs, struct ringfs_flash_partition *flash, uint32_t version, int object_size);
 
 /**
  * Format the flash memory.
@@ -179,6 +182,10 @@ void ringfs_dump(FILE *stream, struct ringfs *fs);
 /**
  * @}
  */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 
