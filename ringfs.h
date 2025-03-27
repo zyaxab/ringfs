@@ -53,6 +53,13 @@ struct ringfs_flash_partition
      * @returns size on success, -1 on failure.
      */
     ssize_t (*read)(struct ringfs_flash_partition *flash, int address, void *data, size_t size);
+    /**
+     * Sends a log message to the application. May be unassigned.
+     * @param flash A pointer to this.
+     * @param fmt Format string.
+     * @param ... Arguments.
+     */
+    void (*log)(struct ringfs_flash_partition *flash, const char *fmt, ...);
 };
 
 /** @private */
