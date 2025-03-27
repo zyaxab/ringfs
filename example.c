@@ -6,6 +6,7 @@
  * published by Sam Hocevar. See the COPYING file for more details.
  */
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -50,6 +51,15 @@ static ssize_t op_read(struct ringfs_flash_partition *flash, int address, void *
     return size;
 }
 
+static void op_log(struct ringfs_flash_partition *flash, const char *fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    printf("[ringfs] %p ", flash);
+    vprintf(fmt, args);
+    va_end(args);
+}
+
 static struct ringfs_flash_partition flash = {
     .sector_size = FLASH_SECTOR_SIZE,
     .sector_offset = FLASH_PARTITION_OFFSET,
@@ -58,6 +68,7 @@ static struct ringfs_flash_partition flash = {
     .sector_erase = op_sector_erase,
     .program = op_program,
     .read = op_read,
+    .log = op_log
 };
 
 

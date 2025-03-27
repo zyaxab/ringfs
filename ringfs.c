@@ -19,6 +19,12 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#define LOG(fs, str, ...) \
+    do { \
+        if ((fs)->flash->log) { \
+            (fs)->flash->log(fs->flash, str, ##__VA_ARGS__); \
+        } \
+    } while (0)
 
 /**
  * @defgroup sector
@@ -201,7 +207,7 @@ int ringfs_scan(struct ringfs *fs)
 
         /* Detect partially-formatted partitions. */
         if (header.status == SECTOR_FORMATTING) {
-            printf("ringfs_scan: partially formatted partition\r\n");
+            LOG(fs, "ringfs_scan: partially formatted partition");
             return -1;
         }
 
@@ -213,14 +219,14 @@ int ringfs_scan(struct ringfs *fs)
 
         /* Detect corrupted sectors. */
         if (header.status != SECTOR_FREE && header.status != SECTOR_IN_USE) {
-            printf("ringfs_scan: corrupted sector %d\r\n", sector);
+            LOG(fs, "ringfs_scan: corrupted sector %d\r\n", sector);
             return -1;
         }
 
         /* Detect obsolete versions. We can't do this earlier because the version
          * could have been invalid due to a partial erase. */
         if (header.version != fs->version) {
-            printf("ringfs_scan: incompatible version 0x%08"PRIx32"\r\n", header.version);
+            LOG(fs, "ringfs_scan: incompatible version 0x%08"PRIx32"", header.version);
             return -1;
         }
 
@@ -243,7 +249,7 @@ int ringfs_scan(struct ringfs *fs)
 
     /* Detect the lack of a FREE sector. */
     if (!free_seen) {
-        printf("ringfs_scan: invariant violated: no FREE sector found\r\n");
+        LOG(fs, "ringfs_scan: invariant violated: no FREE sector found");
         return -1;
     }
 
@@ -350,7 +356,7 @@ int ringfs_append(struct ringfs *fs, const void *object)
         /* Free sector. Mark as used. */
         _sector_set_status(fs, fs->write.sector, SECTOR_IN_USE);
     } else if (status != SECTOR_IN_USE) {
-        printf("ringfs_append: corrupted filesystem\r\n");
+        LOG(fs, "ringfs_append: corrupted filesystem");
         return -1;
     }
 
