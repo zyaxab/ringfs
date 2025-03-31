@@ -8,6 +8,7 @@
 
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -85,6 +86,17 @@ static ssize_t op_read(struct ringfs_flash_partition *flash, int address, void *
     return size;
 }
 
+static void op_log(struct ringfs_flash_partition *flash, const char *fmt, ...)
+{
+    (void) flash;
+    va_list args;
+    va_start(args, fmt);
+    printf("[ringfs] ");
+    vprintf(fmt, args);
+    printf("\n");
+    va_end(args);
+}
+
 /*
  * A really small filesystem: 3 slots per sector, 15 slots total.
  * Has the benefit of causing frequent wraparounds, potentially finding
@@ -98,6 +110,7 @@ static struct ringfs_flash_partition flash = {
     .sector_erase = op_sector_erase,
     .program = op_program,
     .read = op_read,
+    .log = op_log
 };
 
 static void fixture_flashsim_setup(void)
