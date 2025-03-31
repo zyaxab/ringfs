@@ -54,7 +54,9 @@ class libringfs(GenericLibrary):
         ['ringfs_count_estimate', [POINTER(StructRingFS)], c_int],
         ['ringfs_count_exact', [POINTER(StructRingFS)], c_int],
         ['ringfs_append', [POINTER(StructRingFS), c_void_p], c_int],
+        ['ringfs_append_ex', [POINTER(StructRingFS), c_void_p, c_int], c_int],
         ['ringfs_fetch', [POINTER(StructRingFS), c_void_p], c_int],
+        ['ringfs_fetch_ex', [POINTER(StructRingFS), c_void_p], c_int],
         ['ringfs_discard', [POINTER(StructRingFS)], c_int],
         ['ringfs_rewind', [POINTER(StructRingFS)], c_int],
         ['ringfs_dump', [c_void_p, POINTER(StructRingFS)], None],
@@ -111,9 +113,17 @@ class RingFS(object):
     def append(self, obj):
         self.libringfs.ringfs_append(byref(self.ringfs), obj)
 
+    def append_ex(self, obj, size):
+        self.libringfs.ringfs_append_ex(byref(self.ringfs), obj, size)
+
     def fetch(self):
         obj = create_string_buffer(self.object_size)
         self.libringfs.ringfs_append(byref(self.ringfs), obj)
+        return obj.raw
+
+    def fetch_ex(self, size):
+        obj = create_string_buffer(size)
+        self.libringfs.ringfs_fetch_ex(byref(self.ringfs), obj, size)
         return obj.raw
 
     def discard(self):

@@ -138,6 +138,7 @@ int ringfs_count_exact(struct ringfs *fs);
 
 /**
  * Append an object at the end of the ring. Deletes oldest objects as needed.
+ * This assumes that \p object has the same size as specified in ringfs_init().
  *
  * @param fs Initialized RingFS instance.
  * @param object Object to be stored.
@@ -146,13 +147,38 @@ int ringfs_count_exact(struct ringfs *fs);
 int ringfs_append(struct ringfs *fs, const void *object);
 
 /**
+ * Append an object at the end of the ring. Deletes oldest objects as needed.
+ * \p size must be positive and less than or equal to the size specified in
+ * ringfs_init().
+ *
+ * @param fs Initialized RingFS instance.
+ * @param object Object to be stored.
+ * @param size Size of the object in bytes.
+ * @returns Zero on success, -1 on failure.
+ */
+int ringfs_append_ex(struct ringfs *fs, const void *object, int size);
+
+/**
  * Fetch next object from the ring, oldest-first. Advances read cursor.
+ * This assumes that \p object has the same size as specified in ringfs_init().
  *
  * @param fs Initialized RingFS instance.
  * @param object Buffer to store retrieved object.
  * @returns Zero on success, -1 on failure.
  */
 int ringfs_fetch(struct ringfs *fs, void *object);
+
+/**
+ * Fetch next object from the ring, oldest-first. Advances read cursor.
+ * \p size must be positive and less than or equal to the size specified in
+ * ringfs_init().
+ *
+ * @param fs Initialized RingFS instance.
+ * @param object Buffer to store retrieved object.
+ * @param size Size of the object in bytes.
+ * @returns Zero on success, -1 on failure.
+ */
+int ringfs_fetch_ex(struct ringfs *fs, void *object, int size);
 
 /**
  * Discard all fetched objects up to the read cursor.
