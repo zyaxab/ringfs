@@ -319,6 +319,15 @@ int ringfs_count_exact(struct ringfs *fs)
 
 int ringfs_append(struct ringfs *fs, const void *object)
 {
+    return ringfs_append_ex(fs, object, fs->object_size);
+}
+
+int ringfs_append_ex(struct ringfs *fs, const void *object, int size)
+{
+    if (size > fs->object_size || size < 0) {
+        return -1;
+    }
+
     uint32_t status;
 
     /*
@@ -360,7 +369,7 @@ int ringfs_append(struct ringfs *fs, const void *object)
     /* Write object. */
     fs->flash->program(fs->flash,
             _slot_address(fs, &fs->write) + sizeof(struct slot_header),
-            object, fs->object_size);
+            object, size);
 
     /* Commit write. */
     _slot_set_status(fs, &fs->write, SLOT_VALID);
@@ -373,6 +382,15 @@ int ringfs_append(struct ringfs *fs, const void *object)
 
 int ringfs_fetch(struct ringfs *fs, void *object)
 {
+    return ringfs_fetch_ex(fs, object, fs->object_size);
+}
+
+int ringfs_fetch_ex(struct ringfs *fs, void *object, int size)
+{
+    if (size > fs->object_size || size < 0) {
+        return -1;
+    }
+
     /* Advance forward in search of a valid slot. */
     while (!_loc_equal(&fs->cursor, &fs->write)) {
         uint32_t status;
@@ -382,7 +400,7 @@ int ringfs_fetch(struct ringfs *fs, void *object)
         if (status == SLOT_VALID) {
             fs->flash->read(fs->flash,
                     _slot_address(fs, &fs->cursor) + sizeof(struct slot_header),
-                    object, fs->object_size);
+                    object, size);
             _loc_advance_slot(fs, &fs->cursor);
             return 0;
         }
