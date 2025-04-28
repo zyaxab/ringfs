@@ -9,5 +9,11 @@ ringfs = declare_dependency(
   include_directories: include_directories('.')
 )
 
-subdir('test_new')
+meson.override_dependency('ringfs', ringfs)
+
+if not meson.is_subproject()
+  subdir('test_new')
+endif
+
+
 
