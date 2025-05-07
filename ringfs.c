@@ -331,7 +331,7 @@ int ringfs_append(struct ringfs *fs, const void *object)
 int ringfs_append_ex(struct ringfs *fs, const void *object, int size)
 {
     if (size > fs->object_size || size < 0) {
-        return -1;
+        return RINGFS_ERROR;
     }
 
     uint32_t status;
@@ -346,7 +346,17 @@ int ringfs_append_ex(struct ringfs *fs, const void *object, int size)
     /* Make sure the next sector is free. */
     int next_sector = (fs->write.sector+1) % fs->flash->sector_count;
     _sector_get_status(fs, next_sector, &status);
+
+    /*
+     * Next sector contains data. Depending on the configured write behavior we
+     * need to either reject the write request or delete old data
+     */
+    printf("status = %x\n", status);
+    if (status == SECTOR_IN_USE && fs->reject_write_when_full)
+        return RINGFS_FULL;
+
     if (status != SECTOR_FREE) {
+        printf("sector is not free\n");
         /* Next sector must be freed. But first... */
 
         /* Move the read & cursor heads out of the way. */
@@ -366,7 +376,7 @@ int ringfs_append_ex(struct ringfs *fs, const void *object, int size)
         _sector_set_status(fs, fs->write.sector, SECTOR_IN_USE);
     } else if (status != SECTOR_IN_USE) {
         LOG(fs, "ringfs_append: corrupted filesystem");
-        return -1;
+        return RINGFS_ERROR;
     }
 
     /* Preallocate slot. */
@@ -383,7 +393,7 @@ int ringfs_append_ex(struct ringfs *fs, const void *object, int size)
     /* Advance the write head. */
     _loc_advance_slot(fs, &fs->write);
 
-    return 0;
+    return RINGFS_OK;
 }
 
 int ringfs_fetch(struct ringfs *fs, void *object)
