@@ -453,10 +453,10 @@ int ringfs_rewind(struct ringfs *fs)
 
 int ringfs_tell(struct ringfs *fs)
 {
-    int sector_delta = (fs->cursor.sector - fs->read.sector + fs->flash->sector_count) %
+    int sector_diff = (fs->cursor.sector - fs->read.sector + fs->flash->sector_count) %
         fs->flash->sector_count;
-    int slot_delta = fs->cursor.slot - fs->read.slot;
-    return sector_delta * fs->slots_per_sector + slot_delta;
+    int slot_diff = fs->cursor.slot - fs->read.slot;
+    return sector_diff * fs->slots_per_sector + slot_diff;
 }
 
 void ringfs_dump(FILE *stream, struct ringfs *fs)
