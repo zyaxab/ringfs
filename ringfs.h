@@ -22,6 +22,10 @@ extern "C" {
 #include <stdio.h>
 #include <unistd.h>
 
+#define RINGFS_OK        0
+#define RINGFS_ERROR    -1
+#define RINGFS_FULL     -2
+
 /**
  * Flash memory+parition descriptor.
  */
@@ -84,6 +88,13 @@ struct ringfs {
     struct ringfs_loc read;
     struct ringfs_loc write;
     struct ringfs_loc cursor;
+
+    /**
+     * Write behavior when fs is full.
+     * 0 - discard old data (default)
+     * 1 - reject new data
+     */
+    int reject_write_when_full;
 };
 
 /**
@@ -149,7 +160,9 @@ int ringfs_count_exact(struct ringfs *fs);
  *
  * @param fs Initialized RingFS instance.
  * @param object Object to be stored.
- * @returns Zero on success, -1 on failure.
+ * @retval RINGFS_OK on success
+ * @retval RINGFS_ERROR if the size is invalid or the write fails
+ * @retval RINGFS_FULL if the ring is full and reject_write_when_full is set
  */
 int ringfs_append(struct ringfs *fs, const void *object);
 
@@ -161,7 +174,9 @@ int ringfs_append(struct ringfs *fs, const void *object);
  * @param fs Initialized RingFS instance.
  * @param object Object to be stored.
  * @param size Size of the object in bytes.
- * @returns Zero on success, -1 on failure.
+ * @retval RINGFS_OK on success
+ * @retval RINGFS_ERROR if the size is invalid or the write fails
+ * @retval RINGFS_FULL if the ring is full and reject_write_when_full is set
  */
 int ringfs_append_ex(struct ringfs *fs, const void *object, int size);
 

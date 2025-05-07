@@ -32,6 +32,16 @@ semantics:
 
 See ``example.c`` if this sounds complicated.
 
+### Write behavior when full
+
+Ringfs requires at least one sector free when it appends data as it moves the
+read- and cursor heads to the next sector when the current one is full. By
+default it will erase the next sector if needed. This behavior can be prevented
+by setting `ringfs.reject_write_when_full` to `1`. When enabled `ringfs_append`
+will return `RINGFS_FULL` and the data will be rejected.
+
+Due to this the filesystem can at most hold `size - sector_size` of data.
+
 ## Documentation
 
 See Doxygen-generated documentation at http://cloudyourcar.github.io/ringfs/.
@@ -51,7 +61,7 @@ object sizes some day.
 ## License
 
 > Copyright © 2014 Kosma Moczek \<kosma@cloudyourcar.com\>
-> 
+>
 > This program is free software. It comes without any warranty, to the extent
 > permitted by applicable law. You can redistribute it and/or modify it under
 > the terms of the Do What The Fuck You Want To Public License, Version 2, as
