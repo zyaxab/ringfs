@@ -351,12 +351,10 @@ int ringfs_append_ex(struct ringfs *fs, const void *object, int size)
      * Next sector contains data. Depending on the configured write behavior we
      * need to either reject the write request or delete old data
      */
-    printf("status = %x\n", status);
     if (status == SECTOR_IN_USE && fs->reject_write_when_full)
         return RINGFS_FULL;
 
     if (status != SECTOR_FREE) {
-        printf("sector is not free\n");
         /* Next sector must be freed. But first... */
 
         /* Move the read & cursor heads out of the way. */
