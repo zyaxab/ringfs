@@ -221,6 +221,16 @@ int ringfs_item_discard(struct ringfs *fs);
 int ringfs_rewind(struct ringfs *fs);
 
 /**
+ * Get current cursor pointer.
+ *
+ * Returns the number of items from the beginning of the ring the cursor
+ * pointer is currently at.
+ *
+ * @returns Cursor pointer location in terms of items.
+ */
+int ringfs_tell(struct ringfs *fs);
+
+/**
  * Dump filesystem metadata. For debugging purposes.
  * @param stream File stream to write to.
  * @param fs Initialized RingFS instance.
