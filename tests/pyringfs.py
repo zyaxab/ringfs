@@ -31,6 +31,11 @@ class StructRingFSLoc(Structure):
         ('slot', c_int),
     ]
 
+class StructRingFSConfig(Structure):
+    _fields_ = [
+        ('reject_write_when_full', c_int)
+    ]
+
 class StructRingFS(Structure):
     _fields_ = [
         ('flash', POINTER(StructRingFSFlashPartition)),
@@ -41,6 +46,7 @@ class StructRingFS(Structure):
         ('read', StructRingFSLoc),
         ('write', StructRingFSLoc),
         ('cursor', StructRingFSLoc),
+        ('config', StructRingFSConfig)
     ]
 
 

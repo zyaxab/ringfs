@@ -73,6 +73,22 @@ struct ringfs_loc {
 };
 
 /**
+ * User controlled configuration.
+ *
+ * Used by the application to configure RingFS behavior.
+ * The default values are set in ringfs_init() and can be changed
+ * after initialization.
+ */
+struct ringfs_config {
+    /**
+     * Write behavior when fs is full.
+     * 0 - discard old data (default)
+     * 1 - reject new data
+     */
+    int reject_write_when_full;
+};
+
+/**
  * RingFS instance. Should be initialized with ringfs_init() befure use.
  * Structure fields should not be accessed directly.
  * */
@@ -89,12 +105,8 @@ struct ringfs {
     struct ringfs_loc write;
     struct ringfs_loc cursor;
 
-    /**
-     * Write behavior when fs is full.
-     * 0 - discard old data (default)
-     * 1 - reject new data
-     */
-    int reject_write_when_full;
+    /* User controlled configuration */
+    struct ringfs_config config;
 };
 
 /**

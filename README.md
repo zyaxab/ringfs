@@ -37,8 +37,8 @@ See ``example.c`` if this sounds complicated.
 Ringfs requires at least one sector free when it appends data as it moves the
 read- and cursor heads to the next sector when the current one is full. By
 default it will erase the next sector if needed. This behavior can be prevented
-by setting `ringfs.reject_write_when_full` to `1`. When enabled `ringfs_append`
-will return `RINGFS_FULL` and the data will be rejected.
+by setting `ringfs.config.reject_write_when_full` to `1`. When enabled
+`ringfs_append` will return `RINGFS_FULL` and the data will be rejected.
 
 Due to this the filesystem can at most hold `size - sector_size` of data.
 

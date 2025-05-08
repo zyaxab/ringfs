@@ -154,6 +154,7 @@ void ringfs_init(struct ringfs *fs, struct ringfs_flash_partition *flash, uint32
     fs->flash = flash;
     fs->version = version;
     fs->object_size = object_size;
+    fs->config.reject_write_when_full = false;
 
     /* Precalculate commonly used values. */
     fs->slots_per_sector = (fs->flash->sector_size - sizeof(struct sector_header)) /
@@ -351,7 +352,7 @@ int ringfs_append_ex(struct ringfs *fs, const void *object, int size)
      * Next sector contains data. Depending on the configured write behavior we
      * need to either reject the write request or delete old data
      */
-    if (status == SECTOR_IN_USE && fs->reject_write_when_full)
+    if (status == SECTOR_IN_USE && fs->config.reject_write_when_full)
         return RINGFS_FULL;
 
     if (status != SECTOR_FREE) {
